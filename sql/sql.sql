@@ -236,3 +236,19 @@ CREATE TABLE gazette_resources (
   display_order INTEGER DEFAULT 0
 );
 
+  -- trigger
+-- Create trigger function if not exists
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Apply trigger
+CREATE TRIGGER update_gazette_notices_updated_at 
+    BEFORE UPDATE ON gazette_notices 
+    FOR EACH ROW 
+    EXECUTE FUNCTION update_updated_at_column();
+

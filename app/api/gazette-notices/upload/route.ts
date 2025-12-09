@@ -1,9 +1,22 @@
 // app/api/gazette-notices/upload/route.ts
+
 import { writeFile } from 'fs/promises';
 import { NextRequest } from 'next/server';
 import path from 'path';
+import { promises as fs } from 'fs';
 
+// Define upload directory
 const UPLOAD_DIR = path.join(process.cwd(), 'public/uploads/gazette-notices');
+
+// Helper to ensure directory exists
+async function ensureDirectoryExists(dirPath: string) {
+  try {
+    await fs.mkdir(dirPath, { recursive: true });
+  } catch (error) {
+    // Ignore if directory already exists
+    if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,9 +30,15 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
+    // Sanitize filename
     const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+
+    // Ensure the full directory path exists
+    await ensureDirectoryExists(UPLOAD_DIR);
+
     const filepath = path.join(UPLOAD_DIR, filename);
 
+    // Now safe to write
     await writeFile(filepath, buffer);
 
     const url = `/uploads/gazette-notices/${filename}`;
@@ -31,9 +50,11 @@ export async function POST(request: NextRequest) {
       originalName: file.name,
       type: file.type.startsWith('image/') ? 'image' : 'document',
     });
-  } catch (error) {
-    console.log(error);
-    return Response.json({ error: 'Upload failed' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Upload error:', error);
+    return Response.json(
+      { error: 'Upload failed', details: error.message },
+      { status: 500 }
+    );
   }
 }
-

@@ -6,9 +6,12 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params; // Next.js 16 requires await
+  const { id } = await params;
+
   const res = await query(
-    `SELECT n.*, json_agg(r ORDER BY r.display_order) as resources
+    `SELECT 
+       n.*,
+       COALESCE(json_agg(r ORDER BY r.display_order) FILTER (WHERE r.id IS NOT NULL), '[]') as resources
      FROM gazette_notices n
      LEFT JOIN gazette_resources r ON r.notice_id = n.id
      WHERE n.id = $1
@@ -29,21 +32,24 @@ export async function PUT(
 ) {
   const { id } = await params;
   const body = await request.json();
-  const { title, content, resources } = body;
+  const { title, content = '', resources = [] } = body;
 
-  await query('UPDATE gazette_notices SET title = $1, content = $2 WHERE id = $3', [
-    title,
-    content,
-    id,
-  ]);
+  // Update main notice + auto-set updated_at
+  await query(
+    `UPDATE gazette_notices 
+     SET title = $1, content = $2, updated_at = NOW()
+     WHERE id = $3`,
+    [title, content, id]
+  );
 
-  // Clear old resources
+  // Delete old resources
   await query('DELETE FROM gazette_resources WHERE notice_id = $1', [id]);
 
-  // Insert new ones
+  // Insert new resources
   for (const [index, r] of resources.entries()) {
     await query(
-      `INSERT INTO gazette_resources (notice_id, type, filename, original_name, url, display_order)
+      `INSERT INTO gazette_resources 
+       (notice_id, type, filename, original_name, url, display_order)
        VALUES ($1, $2, $3, $4, $5, $6)`,
       [id, r.type, r.filename, r.originalName, r.url, index]
     );
@@ -57,7 +63,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+
+  // This will auto-delete resources due to ON DELETE CASCADE
   await query('DELETE FROM gazette_notices WHERE id = $1', [id]);
+
   return NextResponse.json({ success: true });
 }
 

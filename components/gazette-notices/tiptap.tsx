@@ -26,8 +26,6 @@ import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { Separator } from "@/components/ui/separator";
 
-interface Tiptap.propTypes = {};
-
 interface TiptapProps {
   content: string;
   onChange: (richText: string) => void;
@@ -36,6 +34,7 @@ interface TiptapProps {
 
 export function Tiptap({ content, onChange, placeholder = "Write something..." }: TiptapProps) {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: {
