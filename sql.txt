@@ -1,0 +1,5 @@
+1. Creating Dump ──(action㉿ACT)-[~/Desktop/lands.g]
+└─$ sudo -u postgres pg_dump -U postgres -d lands > lands_dump.sql
+
+
+
