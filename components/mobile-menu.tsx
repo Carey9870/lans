@@ -19,12 +19,13 @@ import {
 } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
+import { Button } from "./ui/button";
 
 export default function MobileMenu() {
   const [featuresOpen, setFeaturesOpen] = useState(false);
 
   return (
-    <div className="flex flex-col h-full gap-y-3 items-start text-lg font-semibold overflow-y-auto">
+    <div className="flex flex-col h-full gap-y-2 items-start text-lg font-semibold overflow-y-auto">
       <Link href="/" className="text-lg font-semibold">
         <div className="ml-4 hover:underline flex items-center gap-3 ">
           <span>
@@ -34,6 +35,13 @@ export default function MobileMenu() {
         </div>
       </Link>
 
+      {/* <Button asChild variant="ghost" className="ml-4 gap-3">
+  <Link href="/" className="flex items-center gap-3">
+    <Home className="text-amber-500" />
+    Home
+  </Link>
+</Button> */}
+
       <Separator className="my-4" />
 
       {/* FEATURES */}
@@ -42,8 +50,7 @@ export default function MobileMenu() {
         onClick={() => setFeaturesOpen(!featuresOpen)}
       >
         <div className="ml-4 hover:underline flex items-center gap-3 ">
-            <UserCircle className="text-amber-500" />{" "}
-          About Us
+          <UserCircle className="text-amber-500" /> About Us
         </div>
         {featuresOpen ? <ChevronUp /> : <ChevronDown />}
       </button>
@@ -68,37 +75,25 @@ export default function MobileMenu() {
               About the State Department
             </div>
           </Link>
-          <Link 
-            className="hover:underline" 
-            href="/about/history"
-          >
+          <Link className="hover:underline" href="/about/history">
             <div className="flex gap-x-3">
               <Hourglass className="text-sky-500" />
               History
             </div>
           </Link>
-          <Link 
-            className="hover:underline" 
-            href="/about/land-registries"
-          >
+          <Link className="hover:underline" href="/about/land-registries">
             <div className="flex gap-x-3">
               <MapPin className="text-red-600" />
               Land Registries
             </div>
           </Link>
-          <Link 
-            className="hover:underline" 
-            href="/about/departments"
-          >
+          <Link className="hover:underline" href="/about/departments">
             <div className="flex gap-x-3">
               <Building2 className="text-cyan-500" />
               Department Functions
             </div>
           </Link>
-          <Link 
-            className="hover:underline" 
-            href="/about/vacancies"
-          >
+          <Link className="hover:underline" href="/about/vacancies">
             <div className="flex gap-x-3">
               <ClipboardList className="text-emerald-500" />
               Vacancies
@@ -131,7 +126,10 @@ export default function MobileMenu() {
 
       <Separator className="my-4" />
 
-      <Link href="/contact-us" className="text-lg hover:underline font-semibold">
+      <Link
+        href="/contact-us"
+        className="text-lg hover:underline font-semibold"
+      >
         <div className="ml-4 flex items-center gap-x-3 ">
           <span>
             <Phone className="text-amber-500" />{" "}
@@ -141,19 +139,32 @@ export default function MobileMenu() {
       </Link>
 
       {/* Bottom Section */}
-      {/* <div className="mt-auto pt-6 space-y-6">
-        <Button className="w-full bg-green-600 text-white hover:bg-green-700">
-          Pay and Get Paid
-        </Button>
-
-        <div className="flex justify-around mt-4">
-          <Button variant="outline">FB</Button>
-          <Button variant="outline">IG</Button>
-          <Button variant="outline">IN</Button>
-          <Button variant="outline">X</Button>
-          <Button variant="outline">TG</Button>
+      <div className="mt-auto pb-5 flex ml-4 flex-col items-center justify-center pt-2 space-y-7">
+        <div className="w-full rounded-2xl bg-khaki text-white hover:bg-green-700">
+          <span className="flex flex-col p-2 items-center leading-tight">
+            <span>State Department for <span className="underline">Lands</span></span>
+            <span>and <span className="underline">Physical Planning</span></span>
+          </span>
         </div>
-      </div> */}
+
+        <div className="flex justify-center gap-3">
+          <Button className="bg-blue-500" variant="outline">
+            FB
+          </Button>
+          <Button className="bg-pink-400" variant="outline">
+            IG
+          </Button>
+          <Button className="bg-sky-500" variant="outline">
+            IN
+          </Button>
+          <Button className="bg-black text-white" variant="outline">
+            X
+          </Button>
+          <Button className="bg-red-500" variant="outline">
+            TG
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

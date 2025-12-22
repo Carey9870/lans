@@ -3,12 +3,12 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 
 const sponsors = [
-  { name: "Tesla", logo: "/scroll/fao.png" },
-  { name: "SpaceX", logo: "/scroll/rcmrd.jpeg" },
-  { name: "xAI", logo: "/scroll/lsk.png" },
-  { name: "Neuralink", logo: "/scroll/kip.png" },
-  { name: "OpenAI", logo: "/scroll/kpda.png" },
-  { name: "DeepMind", logo: "/scroll/isk.png" },
+  { name: "Tesla", logo: "https://zcwwhcmjfwy59an0.public.blob.vercel-storage.com/public-lands/scroll/fao.png" },
+  { name: "SpaceX", logo: "https://zcwwhcmjfwy59an0.public.blob.vercel-storage.com/public-lands/scroll/rcmrd.jpeg" },
+  { name: "xAI", logo: "https://zcwwhcmjfwy59an0.public.blob.vercel-storage.com/public-lands/scroll/lsk.png" },
+  { name: "Neuralink", logo: "https://zcwwhcmjfwy59an0.public.blob.vercel-storage.com/public-lands/scroll/kip.png" },
+  { name: "OpenAI", logo: "https://zcwwhcmjfwy59an0.public.blob.vercel-storage.com/public-lands/scroll/kpda.png" },
+  { name: "DeepMind", logo: "https://zcwwhcmjfwy59an0.public.blob.vercel-storage.com/public-lands/scroll/isk.png" },
 ];
 
 export default function SponsorCarousel() {

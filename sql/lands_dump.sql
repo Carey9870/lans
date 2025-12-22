@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 4XjAQbUApbFdccV9W9ivQvBwn8hGcofo2HTyZ3HN8nGPLXaiwWOe1wW9Td70dg8
+\restrict euGHYrAyOvR1sYKzBMZRDZbJOyHBpe4nzPEPjWjlcToqfirCIOHZ0jDKR2Gord3
 
 -- Dumped from database version 17.6 (Debian 17.6-1)
 -- Dumped by pg_dump version 17.6 (Debian 17.6-1)
@@ -41,8 +41,8 @@ CREATE FUNCTION public.update_updated_at_column() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
+  NEW.updated_at = CURRENT_TIMESTAMP;
+  RETURN NEW;
 END;
 $$;
 
@@ -50,6 +50,44 @@ $$;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
+
+--
+-- Name: admins; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.admins (
+    id integer NOT NULL,
+    first_name character varying(255) NOT NULL,
+    middle_name character varying(255),
+    last_name character varying(255) NOT NULL,
+    phone character varying(20) NOT NULL,
+    alt_phone character varying(20),
+    email character varying(255) NOT NULL,
+    password_hash character varying(255) NOT NULL,
+    is_verified boolean DEFAULT false,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+--
+-- Name: admins_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.admins_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: admins_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.admins_id_seq OWNED BY public.admins.id;
+
 
 --
 -- Name: categories; Type: TABLE; Schema: public; Owner: -
@@ -81,6 +119,26 @@ CREATE SEQUENCE public.categories_id_seq
 --
 
 ALTER SEQUENCE public.categories_id_seq OWNED BY public.categories.id;
+
+
+--
+-- Name: drivers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.drivers (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    first_name character varying(255) NOT NULL,
+    middle_name character varying(255),
+    last_name character varying(255) NOT NULL,
+    id_no character varying(50) NOT NULL,
+    license_number character varying(50) NOT NULL,
+    contact character varying(10),
+    license_expiry date,
+    photo_url text,
+    place_of_work character varying(255) NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
 
 
 --
@@ -382,6 +440,40 @@ ALTER SEQUENCE public.media_items_id_seq OWNED BY public.media_items.id;
 
 
 --
+-- Name: otps; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.otps (
+    id integer NOT NULL,
+    admin_id integer,
+    otp character varying(7) NOT NULL,
+    type character varying(20) NOT NULL,
+    expires_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+--
+-- Name: otps_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.otps_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: otps_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.otps_id_seq OWNED BY public.otps.id;
+
+
+--
 -- Name: registry_locations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -564,6 +656,13 @@ ALTER SEQUENCE public.tenders_id_seq OWNED BY public.tenders.id;
 
 
 --
+-- Name: admins id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.admins ALTER COLUMN id SET DEFAULT nextval('public.admins_id_seq'::regclass);
+
+
+--
 -- Name: categories id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -627,6 +726,13 @@ ALTER TABLE ONLY public.media_items ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: otps id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.otps ALTER COLUMN id SET DEFAULT nextval('public.otps_id_seq'::regclass);
+
+
+--
 -- Name: registry_locations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -662,6 +768,14 @@ ALTER TABLE ONLY public.tenders ALTER COLUMN id SET DEFAULT nextval('public.tend
 
 
 --
+-- Data for Name: admins; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.admins (id, first_name, middle_name, last_name, phone, alt_phone, email, password_hash, is_verified, created_at) FROM stdin;
+\.
+
+
+--
 -- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -672,6 +786,14 @@ COPY public.categories (id, title, slug, created_at) FROM stdin;
 18	Land Adjudication and Settlement Services	land-adjudication-and-settlement-services	2025-12-04 05:20:50.98372
 19	Physical Planning Services	physical-planning-services	2025-12-04 05:24:56.527131
 20	Surveys and Mapping Services	surveys-and-mapping-services	2025-12-04 05:31:53.730389
+\.
+
+
+--
+-- Data for Name: drivers; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.drivers (id, first_name, middle_name, last_name, id_no, license_number, contact, license_expiry, photo_url, place_of_work, created_at, updated_at) FROM stdin;
 \.
 
 
@@ -803,6 +925,14 @@ COPY public.media_files (id, media_item_id, file_path, type, "order", created_at
 COPY public.media_items (id, title, subtitle, slug, story, date, preview_image, created_at, updated_at) FROM stdin;
 8	ppppp	77777	ppppp	oooop\r\n\r\nopopo\r\n\r\nllkl	2025-12-02	/media/8/preview.png	2025-12-03 08:20:43.199841-05	2025-12-03 08:20:43.199841-05
 9	kkkkkkkkkk	\N	kkkkkkkkkk	aaaaaaaaaaaa\r\nffffffffffffffff\r\nddddddddddd\r\naaaaaaaaaaa\r\nssssssss	2025-12-01	/media/9/preview.jpg	2025-12-03 08:47:13.945067-05	2025-12-03 08:47:13.945067-05
+\.
+
+
+--
+-- Data for Name: otps; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.otps (id, admin_id, otp, type, expires_at, created_at) FROM stdin;
 \.
 
 
@@ -975,6 +1105,13 @@ COPY public.tenders (id, tender_no, description, start_date, closing_datetime, d
 
 
 --
+-- Name: admins_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.admins_id_seq', 1, false);
+
+
+--
 -- Name: categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -1045,6 +1182,13 @@ SELECT pg_catalog.setval('public.media_items_id_seq', 9, true);
 
 
 --
+-- Name: otps_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.otps_id_seq', 1, false);
+
+
+--
 -- Name: registry_locations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -1080,6 +1224,30 @@ SELECT pg_catalog.setval('public.tenders_id_seq', 5, true);
 
 
 --
+-- Name: admins admins_email_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.admins
+    ADD CONSTRAINT admins_email_key UNIQUE (email);
+
+
+--
+-- Name: admins admins_phone_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.admins
+    ADD CONSTRAINT admins_phone_key UNIQUE (phone);
+
+
+--
+-- Name: admins admins_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.admins
+    ADD CONSTRAINT admins_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: categories categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1093,6 +1261,14 @@ ALTER TABLE ONLY public.categories
 
 ALTER TABLE ONLY public.categories
     ADD CONSTRAINT categories_slug_key UNIQUE (slug);
+
+
+--
+-- Name: drivers drivers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.drivers
+    ADD CONSTRAINT drivers_pkey PRIMARY KEY (id);
 
 
 --
@@ -1184,6 +1360,14 @@ ALTER TABLE ONLY public.media_items
 
 
 --
+-- Name: otps otps_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.otps
+    ADD CONSTRAINT otps_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: registry_locations registry_locations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1264,6 +1448,20 @@ ALTER TABLE ONLY public.tenders
 
 
 --
+-- Name: idx_admins_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_admins_email ON public.admins USING btree (email);
+
+
+--
+-- Name: idx_admins_phone; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_admins_phone ON public.admins USING btree (phone);
+
+
+--
 -- Name: idx_gallery_media_created_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1289,6 +1487,13 @@ CREATE INDEX idx_gallery_media_type ON public.gallery_media USING btree (type);
 --
 
 CREATE INDEX idx_media_files_item_order ON public.media_files USING btree (media_item_id, "order");
+
+
+--
+-- Name: idx_otps_admin_id_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_otps_admin_id_type ON public.otps USING btree (admin_id, type);
 
 
 --
@@ -1348,6 +1553,13 @@ CREATE TRIGGER set_timestamp BEFORE UPDATE ON public.forms FOR EACH ROW EXECUTE 
 
 
 --
+-- Name: drivers update_drivers_updated_at; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER update_drivers_updated_at BEFORE UPDATE ON public.drivers FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+
+
+--
 -- Name: faqs update_faqs_updated_at; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -1392,6 +1604,14 @@ ALTER TABLE ONLY public.media_files
 
 
 --
+-- Name: otps otps_admin_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.otps
+    ADD CONSTRAINT otps_admin_id_fkey FOREIGN KEY (admin_id) REFERENCES public.admins(id) ON DELETE CASCADE;
+
+
+--
 -- Name: registry_locations registry_locations_registry_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1419,5 +1639,5 @@ ALTER TABLE ONLY public.service_items
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 4XjAQbUApbFdccV9W9ivQvBwn8hGcofo2HTyZ3HN8nGPLXaiwWOe1wW9Td70dg8
+\unrestrict euGHYrAyOvR1sYKzBMZRDZbJOyHBpe4nzPEPjWjlcToqfirCIOHZ0jDKR2Gord3
 

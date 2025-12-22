@@ -1,3 +1,5 @@
+// components/hero-carousel.tsx
+
 "use client";
 
 import Image from "next/image";
@@ -134,6 +136,7 @@ export default function HeroCarousel() {
                 src={project.video}
                 autoPlay
                 controls
+                preload="none"
                 playsInline
                 className="absolute inset-0 w-full h-full object-cover brightness-75"
               />
@@ -142,6 +145,7 @@ export default function HeroCarousel() {
                 src={project.image}
                 alt={project.title}
                 fill
+                loading="lazy"
                 priority={index === 0}
                 className="object-cover brightness-75"
               />

@@ -252,3 +252,33 @@ CREATE TRIGGER update_gazette_notices_updated_at
     FOR EACH ROW 
     EXECUTE FUNCTION update_updated_at_column();
 
+    -- 10) authentication for admins
+CREATE TABLE IF NOT EXISTS admins (
+  id SERIAL PRIMARY KEY,
+  first_name VARCHAR(255) NOT NULL,
+  middle_name VARCHAR(255),
+  last_name VARCHAR(255) NOT NULL,
+  phone VARCHAR(20) NOT NULL UNIQUE,
+  alt_phone VARCHAR(20),
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  is_verified BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS otps (
+  id SERIAL PRIMARY KEY,
+  admin_id INTEGER REFERENCES admins(id) ON DELETE CASCADE,
+  otp VARCHAR(7) NOT NULL,
+  type VARCHAR(20) NOT NULL,  -- 'registration' or 'login'
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes for faster queries
+CREATE INDEX IF NOT EXISTS idx_admins_email ON admins(email);
+CREATE INDEX IF NOT EXISTS idx_admins_phone ON admins(phone);
+CREATE INDEX IF NOT EXISTS idx_otps_admin_id_type ON otps(admin_id, type);
+
+
+

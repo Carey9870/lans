@@ -11,12 +11,12 @@ type MediaItem = {
 };
 
 const mediaGallery: MediaItem[] = [
-  { type: "image", src: "/events-section/event-1.jpg", alt: "Kenyan n lan" },
-  { type: "video", src: "/events-section/video-1.mp4" },
-  { type: "image", src: "/events-section/event-2.jpg", alt: "Kenyan landscape" },
-  { type: "video", src: "/events-section/video-2.mp4" },
-  { type: "image", src: "/events-section/event-3.jpg", alt: "Rural road" },
-  { type: "video", src: "/events-section/video-3.mp4" },
+  { type: "image", src: "https://zcwwhcmjfwy59an0.public.blob.vercel-storage.com/public-lands/events-section/event-1.jpg", alt: "Kenyan n lan" },
+  { type: "video", src: "https://zcwwhcmjfwy59an0.public.blob.vercel-storage.com/public-lands/events-section/video-1.mp4" },
+  { type: "image", src: "https://zcwwhcmjfwy59an0.public.blob.vercel-storage.com/public-lands/events-section/event-2.jpg", alt: "Kenyan landscape" },
+  { type: "video", src: "https://zcwwhcmjfwy59an0.public.blob.vercel-storage.com/public-lands/events-section/video-2.mp4" },
+  { type: "image", src: "https://zcwwhcmjfwy59an0.public.blob.vercel-storage.com/public-lands/events-section/event-3.jpg", alt: "Rural road" },
+  { type: "video", src: "https://zcwwhcmjfwy59an0.public.blob.vercel-storage.com/public-lands/events-section/video-3.mp4" },
 ];
 
 export default function EventSection() {

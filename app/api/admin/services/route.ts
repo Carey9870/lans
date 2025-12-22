@@ -27,13 +27,15 @@ export async function GET() {
     `);
 
     return NextResponse.json(
-      res.rows.map(row => ({
+      res.rows.map((row) => ({
         ...row,
-        items: row.items || []
+        items: row.items || [],
       }))
     );
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+
+    return NextResponse.json({ error: message }, { status: 500 });
   } finally {
     client.release();
   }
@@ -69,13 +71,19 @@ export async function POST(request: Request) {
       finalSlug = row.slug;
 
       // Optional: update title if changed
-      await client.query("UPDATE categories SET title = $1 WHERE id = $2", [title, categoryId]);
+      await client.query("UPDATE categories SET title = $1 WHERE id = $2", [
+        title,
+        categoryId,
+      ]);
     } else {
       // Create new category
       finalSlug = baseSlug;
       let counter = 1;
       while (true) {
-        const check = await client.query("SELECT 1 FROM categories WHERE slug = $1", [finalSlug]);
+        const check = await client.query(
+          "SELECT 1 FROM categories WHERE slug = $1",
+          [finalSlug]
+        );
         if (check.rows.length === 0) break;
         finalSlug = `${baseSlug}-${++counter}`;
       }
@@ -88,8 +96,11 @@ export async function POST(request: Request) {
     }
 
     // Now add services (skip if already exist by slug)
-    const existingSlugs = await client.query("SELECT slug FROM service_items WHERE category_id = $1", [categoryId]);
-    const usedSlugs = new Set(existingSlugs.rows.map((r: any) => r.slug));
+    const existingSlugs = await client.query(
+      "SELECT slug FROM service_items WHERE category_id = $1",
+      [categoryId]
+    );
+    const usedSlugs = new Set(existingSlugs.rows.map((r) => r.slug)); // it was r:any
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
@@ -129,15 +140,17 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: existingCat.rows.length > 0
-        ? "Services added to existing category!"
-        : "New category & services created!",
+      message:
+        existingCat.rows.length > 0
+          ? "Services added to existing category!"
+          : "New category & services created!",
       categorySlug: finalSlug,
     });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
     await client.query("ROLLBACK");
     console.error("API Error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: 500 });
   } finally {
     client.release();
   }
